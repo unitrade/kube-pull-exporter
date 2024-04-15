@@ -93,10 +93,10 @@ func (ms *MetricsServer) GetPodEvents(namespace, podName string) {
 
 	// Print the events
 	for _, event := range events.Items {
-		if event.Reason == "Pulled" {
+		if event.Reason == "Pulled" && !regexp.MustCompile(`already present on machine`).MatchString(event.Message) {
 			message := event.Message
 			// Use regex to find the number representing the pull time
-			rePullTime := regexp.MustCompile(`(\d+\.\d+)(ms|s)?`)
+			rePullTime := regexp.MustCompile(`(\d+\.\d+)(ms|s)`)
 			pullTimeMatches := rePullTime.FindStringSubmatch(message)
 			// Regular expression to match the base image name
 			reBaseImageName := regexp.MustCompile(`[^(\/|\")]*:`)
