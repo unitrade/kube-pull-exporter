@@ -68,6 +68,10 @@ func (ms *MetricsServer) Run(cfg *config.Config, namespaces []string, interval t
 
 func GetPodsFromNamespace(namespace string) (*v1.PodList, error) {
 	clientset, err := connection.GetK8sClient()
+	if err != nil {
+		log.Errorf("Failed to get Kubernetes client: %v", err)
+		return nil, err
+	}
 	podList, err := clientset.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get pods: %v", err)
@@ -95,7 +99,7 @@ func (ms *MetricsServer) GetPodEvents(namespace, podName string) {
 			rePullTime := regexp.MustCompile(`(\d+\.\d+)(ms|s)?`)
 			pullTimeMatches := rePullTime.FindStringSubmatch(message)
 			// Regular expression to match the base image name
-			reBaseImageName := regexp.MustCompile(`[^\/]+:`)
+			reBaseImageName := regexp.MustCompile(`[^(\/|\")]*:`)
 			baseImageNameMatches := reBaseImageName.FindStringSubmatch(message)
 			if len(pullTimeMatches) > 0 && len(baseImageNameMatches) > 0 {
 				// Convert the matched string for pull time to a float64
