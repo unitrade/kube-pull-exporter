@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 	"infra/k8s-image-metrics/pkg/config"
 	"infra/k8s-image-metrics/pkg/connection"
@@ -112,7 +111,7 @@ func (ms *MetricsServer) GetPodEvents(namespace, podName string) {
 					pullTime /= 1000
 				}
 				pulledImageName := strings.TrimSuffix(baseImageNameMatches[0], ":")
-				ms.Metrics.ImagePullDurationSecondsGauge.With(prometheus.Labels{"namespace": namespace, "pod_name": podName, "image_name": pulledImageName}).Set(pullTime)
+				ms.Metrics.ImagePullDurationSecondsHistogram.WithLabelValues(pulledImageName).Observe(pullTime)
 			} else {
 				fmt.Println("No pull time found in the message.")
 			}

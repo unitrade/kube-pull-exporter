@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	ImagePullDurationSecondsName = "image_pull_duration_seconds"
+	ImagePullDurationSecondsBucketName = "image_pull_duration_seconds"
 )
 
 type Metrics struct {
-	ImagePullDurationSecondsGauge *prometheus.GaugeVec
+	ImagePullDurationSecondsGauge     *prometheus.GaugeVec
+	ImagePullDurationSecondsHistogram *prometheus.HistogramVec
 }
 
 func (Metrics) Handler() http.Handler {
@@ -20,13 +21,14 @@ func (Metrics) Handler() http.Handler {
 
 func New() *Metrics {
 	ms := Metrics{
-		ImagePullDurationSecondsGauge: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: ImagePullDurationSecondsName,
-			Help: "Image pull duration",
-		}, []string{"namespace", "pod_name", "image_name"}),
+		ImagePullDurationSecondsHistogram: prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Name:    ImagePullDurationSecondsBucketName,
+			Help:    "Duration of image pull operations.",
+			Buckets: []float64{1, 2, 5, 10, 15, 20, 30},
+		}, []string{"image"}),
 	}
 	prometheus.MustRegister(
-		ms.ImagePullDurationSecondsGauge,
+		ms.ImagePullDurationSecondsHistogram,
 	)
 	return &ms
 }
