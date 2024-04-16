@@ -20,4 +20,24 @@ To start monitoring your Kubernetes cluster with Kube Pull Exporter, run the fol
 ```./kube-pull-exporter -namespaces=main,default -interval=1m```
 
 ## List of supported metrics
-```image_pull_duration_seconds```
+```
+image_pull_duration_seconds_bucket
+image_pull_duration_seconds_sum
+image_pull_duration_seconds_count
+```
+
+
+## Example
+```
+# TYPE image_pull_duration_seconds histogram
+image_pull_duration_seconds_bucket{image="nginx",le="1"} 0
+image_pull_duration_seconds_bucket{image="nginx",le="2"} 0
+image_pull_duration_seconds_bucket{image="nginx",le="5"} 1
+image_pull_duration_seconds_bucket{image="nginx",le="10"} 1
+image_pull_duration_seconds_bucket{image="nginx",le="15"} 1
+image_pull_duration_seconds_bucket{image="nginx",le="20"} 1
+image_pull_duration_seconds_bucket{image="nginx",le="30"} 1
+image_pull_duration_seconds_bucket{image="nginx",le="+Inf"} 1
+image_pull_duration_seconds_sum{image="nginx"} 2.213971983
+image_pull_duration_seconds_count{image="nginx"} 1
+```

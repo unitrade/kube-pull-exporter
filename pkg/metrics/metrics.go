@@ -11,7 +11,6 @@ const (
 )
 
 type Metrics struct {
-	ImagePullDurationSecondsGauge     *prometheus.GaugeVec
 	ImagePullDurationSecondsHistogram *prometheus.HistogramVec
 }
 
