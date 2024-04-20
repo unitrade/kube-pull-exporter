@@ -1,0 +1,24 @@
+{{- if and .Values.rbac.create .Values.rbac.clusterRoleBinding}}
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "exporter.fullname" . }}-clusterrolebinding
+  namespace: {{ .Values.namespace | default $.Release.Namespace }}
+  labels:
+  {{- include "exporter.labels" . | nindent 4 }}
+{{- with .Values.rbac.extraLabels }}
+{{ toYaml . | indent 4}}
+{{- end }}
+{{- with .Values.rbac.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "exporter.serviceAccountName" . }}
+    namespace: {{ .Values.namespace | default $.Release.Namespace }}
+roleRef:
+  kind: {{ .Values.rbac.clusterRoleBinding.roleRef.kind | default "ClusterRole" }}
+  name: {{ template "exporter.fullname" . }}-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+{{- end -}}

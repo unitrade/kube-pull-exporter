@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "exporter.fullname" . }}
+  namespace: {{ .Values.namespace | default $.Release.Namespace }}
+  labels:
+    {{- include "exporter.labels" . | nindent 4 }}
+  {{- with .Values.exporter.annotations }}
+    annotations:
+      {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "exporter.selectorLabels" . | nindent 6 }}
+  {{- with .Values.exporter.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with .Values.exporter.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "exporter.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.exporter.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "exporter.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.exporter.terminationGracePeriodSeconds | default 60 }}
+      securityContext:
+        {{- toYaml .Values.exporter.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- if .Values.exporter.securityContext }}
+          securityContext:
+            {{- toYaml .Values.exporter.securityContext | nindent 12 }}
+          {{- end}}
+          image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.exporter.image.pullPolicy | default "IfNotPresent" }}
+          command:
+            - sh
+            - -c
+          args:
+{{/*            - while true; do foo; sleep 2; done*/}}
+            - >
+              exec kube-pull-exporter
+              {{- if index  .Values.exporter.extraArgs "namespaces" }}
+              -namespaces={{ index .Values.exporter.extraArgs "namespaces" }}
+              {{- end }}
+              {{- if index  .Values.exporter.extraArgs "interval" }}
+              -interval=3m
+              {{- end }}
+          ports:
+          {{- range $portObj := .Values.exporter.ports }}
+            - name: {{ $portObj.name }}
+              containerPort: {{ $portObj.port }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+            {{- if index  .Values.exporter.extraArgs "http.pathPrefix" }}
+              path: /{{ trimSuffix "/" (index .Values.exporter.extraArgs "http.pathPrefix") }}/health
+            {{- else }}
+              path: /metrics
+            {{- end }}
+            {{- range $portObj := .Values.exporter.ports }}
+              port: {{ $portObj.name }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.exporter.probe.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.exporter.probe.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.exporter.probe.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.exporter.probe.readiness.failureThreshold }}
+          livenessProbe:
+            tcpSocket:
+              {{- range $portObj := .Values.exporter.ports }}
+              port: {{ $portObj.name }}
+              {{- end }}
+            initialDelaySeconds: {{ .Values.exporter.probe.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.exporter.probe.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.exporter.probe.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.exporter.probe.liveness.failureThreshold }}
+          {{- with .Values.exporter.env }}
+          env: {{ toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.exporter.resources | nindent 12 }}
+      {{- with .Values.exporter.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.exporter.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.exporter.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

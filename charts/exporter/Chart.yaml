@@ -1,0 +1,5 @@
+apiVersion: v2
+name: kube-pull-exporter
+description: A Helm chart for deploying kube-pull-exporter
+version: 0.0.1
+appVersion: "0.0.11"

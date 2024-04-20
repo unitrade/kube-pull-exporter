@@ -1,0 +1,12 @@
+{{- if and .Values.rbac.create .Values.rbac.clusterRole }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "exporter.fullname" . }}-clusterrole
+  namespace: {{ .Values.namespace | default $.Release.Namespace }}
+  labels:
+  {{- include "exporter.labels" . | nindent 4 }}
+rules:
+{{- toYaml .Values.rbac.clusterRole.rules | nindent 2 }}
+---
+{{- end }}
