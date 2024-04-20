@@ -4,21 +4,45 @@
 
 * Install the follow packages: ``git``, ``kubectl``, ``helm``, ``helm-docs``.
 
-[Helm](https://helm.sh) must be installed to use the charts.  Please refer to
-Helm's [documentation](https://helm.sh/docs) to get started.
+## How to install
 
-Once Helm has been set up correctly, add the repo as follows:
+Access a Kubernetes cluster.
 
-helm repo add <alias> https://<orgname>.github.io/helm-charts
+Add a chart helm repository with follow commands:
 
-If you had already added this repo earlier, run `helm repo update` to retrieve
-the latest versions of the packages.  You can then run `helm search repo
-<alias>` to see the charts.
+```console
+helm repo add kube-pull-exporter https://unitrade.github.io/kube-pull-exporter/   
 
-To install the <chart-name> chart:
+helm repo update
+```
 
-    helm install kube-pull-exporter <alias>/<chart-name>
+List versions of ``kube-pull-exporter`` chart available to installation:
 
-To uninstall the chart:
+```console
+helm search repo kube-pull-exporter -l
+```
+Test the installation with command:
 
-    helm delete kube-pull-exporter
+```console
+helm install kube-pull-exporter kube-pull-exporter -f values.yaml -n NAMESPACE --debug --dry-run
+```
+
+Install chart with command:
+
+```console
+helm install kube-pull-exporter kube-pull-exporter -f values.yaml -n NAMESPACE
+```
+
+Get the pods lists by running this commands:
+
+```console
+kubectl get pods -A | grep 'kube-pull-exporter'
+```
+
+## How to uninstall
+
+Remove application with command.
+
+```console
+helm uninstall kube-pull-exporter -n NAMESPACE
+```
