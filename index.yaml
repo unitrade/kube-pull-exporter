@@ -3,6 +3,15 @@ entries:
   kube-pull-exporter:
   - apiVersion: v2
     appVersion: 0.0.12
+    created: "2024-04-21T05:59:42.925857209Z"
+    description: A Helm chart for deploying kube-pull-exporter
+    digest: 950e36fee9b42a2c6833544dee717c6398019dd1c0591c3c540c442ae82b33ca
+    name: kube-pull-exporter
+    urls:
+    - https://github.com/unitrade/kube-pull-exporter/releases/download/kube-pull-exporter-0.0.3/kube-pull-exporter-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.12
     created: "2024-04-20T19:23:58.605683996Z"
     description: A Helm chart for deploying kube-pull-exporter
     digest: 5f798af44924c126b99b04a50776260e7675d5cd3e1021b59ab04dbfcf63e227
@@ -19,4 +28,4 @@ entries:
     urls:
     - https://github.com/unitrade/kube-pull-exporter/releases/download/kube-pull-exporter-0.0.1/kube-pull-exporter-0.0.1.tgz
     version: 0.0.1
-generated: "2024-04-20T19:23:58.605718251Z"
+generated: "2024-04-21T05:59:42.92586896Z"
