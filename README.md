@@ -1,4 +1,11 @@
 # kube-pull-exporter
+![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-informational?style=flat-square)
+![GoLang: 1.21.7](https://img.shields.io/static/v1?label=GoLang&message=1.21.7&color=purple&logo=go)
+![License](https://img.shields.io/static/v1?label=License&message=Apache-2.0&color=green&logo=apache)
+![Helm: v3](https://img.shields.io/static/v1?label=Helm&message=v3&color=informational&logo=helm)
+![Image size: 39.8MB](https://img.shields.io/static/v1?label=Image_size&message=39.8MB&color=informational&logo=Docker&link=https%3A%2F%2Fhub.docker.com%2Frepository%2Fdocker%2Funitrade23%2Fkube-pull-exporter%2Fgeneral)
+
+![image (12)](https://github.com/unitrade/kube-pull-exporter/assets/28563126/32991bc6-e121-4769-b5ee-0fc87991314e)
 
 Kube Pull Exporter is a tool designed to monitor and export metrics from Kubernetes clusters. This repository contains the source code, documentation, and examples to help you get started with using Kube Pull Exporter in your projects.
 
